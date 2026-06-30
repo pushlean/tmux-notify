@@ -62,11 +62,10 @@ if [[ ! -f "$PID_FILE_PATH" ]]; then  # If pane not yet monitored
   while true; do
     # capture pane output
     output=$(tmux capture-pane -pt %"$PANE_ID")
-    
+
     # run tests to determine if work is done
     # if so, break and notify
-    if echo "$output" | tail -n2 | grep -e $prompt_regex_value &> /dev/null; then
-      # tmux display-message "$@"
+    if echo "$output" | grep -v '^[[:space:]]*$' | tail -n10 | grep -qe "$prompt_regex_value" &> /dev/null; then
       if [[ "$1" == "true" ]]; then
         tmux switch -t \$"$SESSION_ID"
         tmux select-window -t @"$WINDOW_ID"
